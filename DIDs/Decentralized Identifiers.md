@@ -384,7 +384,144 @@ DID文档中密钥的缓存和到期完全由DID解析器和其他客户端负�
 }
 ```
 
+### 创建（可选）
+标识符记录的标准元数据包括原始创建的时间戳。包含创建时间戳的规则是：
 
+1. DID文档必须具有零个或一个表示创建时间戳的属性；推荐包含这个属性。
+2. 此属性的键必须是`created`。
+3. 此密钥的值必须是有效的XML日期时间值，如[W3C XML模式定义语言（XSD）1.1第2部分：数据类型 [ XMLSCHEMA11-2 ]](https://www.w3.org/TR/xmlschema11-2/)。
+4. 该日期时间值必须标准化为UTC 00:00，通过尾随“Z”标示。
+5. 当DLT支持这样的概念时 ，依赖于DLT的方法规范应该要求在已知的“中值时间过去”（[在比特币BIP 113中定义](https://github.com/bitcoin/bips/blob/master/bip-0113.mediawiki)）之后的时间值。
+```json
+{
+  "created": "2002-10-10T17:00:00Z"
+}
+```
+
+### 更新（可选）
+标识符记录的标准元数据包括最近更改的时间戳。包含更新时间戳的规则是：
+
+1. DID文档必须具有零个或一个表示更新时间戳的属性。它被推荐到包括这个属性。
+2. 此属性的键必须是`updated`。
+3. 此键的值必须遵循上一章节「创建（可选）」中的格式规则。
+```json
+{
+  "updated": "2016-10-17T02:41:00Z"
+}
+```
+
+### 证明（可选）
+DID文档上的一个证明是根据以下任一方式的DID文档完整性的加密证明：
+
+1. “服务端点”中 定义的实体，如果不存在：
+2. “公钥定义”里的代理。
+此证明不能证明DID和DID文档之间的绑定。证明的规则是：
+
+1. DID文档可以只有一个表示证明的属性。
+2. 这个属性的键必须是`proof`。
+3. 此键的值必须是由Linked Data Proofs定义的有效JSON-LD证明。
+```json
+{
+  "proof": {
+    "type": "LinkedDataSignature2015",
+    "created": "2016-02-08T16:02:20Z",
+    "creator": "did:example:8uQhQMGzWxR8vw5P3UWH1ja#keys-1",
+    "signatureValue": "QNB13Y7Q9...1tzjn4w=="
+  }
+}
+```
+
+### 可扩展性
+去中心化标识符数据模型的目标之一是实现无权创新。这要求数据模型可以通过多种不同方式进行扩展：
+* 通过使用基于图的数据模型提供了对复杂多实体关系建模的要求。
+* 通过使用[ [LINKED-DATA](https://www.w3.org/DesignIssues/LinkedData.html) ] 来实现扩展用于描述数据模型中的信息的机器可读词汇表 —— 不依赖于集中式系统 —— 的要求。
+* 支持多种类型的加密证明格式的要求是通过使用关联数据证明[ [LD-PROOFS](https://w3c-dvcg.github.io/ld-proofs/) ]，关联数据签名[ [LD-SIGNATURES](https://w3c-dvcg.github.io/ld-signatures/) ]和各种签名套件来完成的。
+* 通过使用[ [JSON-LD](https://www.w3.org/TR/json-ld/) ] ，能够以软件开发人员和网页作者之间流行的数据格式提供上述所有可扩展性机制的要求。
+
+这种数据建模方法通常被称为“开放世界假设”，这意味着任何实体都可以描述任何其他实体。这种方法通常与构建简单且可预测的软件系统相冲突。与开放世界的假设相比，平衡可扩展性与程序正确性总是比封闭式软件系统更具挑战性。
+
+本节的其余部分通过一系列示例描述了如何实现可扩展性和程序正确性。
+
+我们假设我们从以下DID文档开始：
+```json
+{
+  "@context": "https://example.org/example-method/v1",
+  "id": "did:example:123456789abcdefghi",
+  "publicKey": [{ ... }],
+  "authentication": [{ ... }],
+  "service": [{ ... }]
+}
+```
+`publicKey`，`authentication`和`service`等属性的内容对于本节来说不重要。重要的是上面的对象是有效的DID文档。让我们假设开发人员想扩展DID文档以表达一条额外的信息：主题的公共照片流。
+
+开发人员要做的第一件事就是创建一个包含新术语的JSON-LD Context：
+```json
+{
+  "@context": {
+    "PhotoStreamService": "https://example.com/vocab#PhotoStreamService"
+  }
+}
+```
+现在已经创建了JSON-LD Context，开发人员必须将它发布到任何DID Document 处理器都可以访问的地方。对于此示例，让我们假设上面的JSON-LD上下文发布在以下URL的分布式帐本中： `did:example:contexts:987654321`。此时，扩展本节中的第一个示例很简单，包括上面的上下文并将新属性添加到DID文档。
+```json
+{
+  "@context": "https://example.org/example-method/v1",
+  "id": "did:example:123456789abcdefghi",
+  "authentication": [{ ... }],
+  "service": [{
+    "@context": "did:example:contexts:987654321",
+    "id": "did:example:123456789abcdefghi;photos",
+    "type": "PhotoStreamService",
+    "serviceEndpoint": "https://example.org/photos/379283"
+  }]
+}
+```
+到目前为止的例子表明，很容易以无权限和去中心化的方式扩展去中心化标识符数据模型。该机制还确保以这种方式创建的去中心化标识符可以防止命名空间冲突和语义模糊。
+
+这种动态的可扩展性模型确实增加了实现负担。为此类系统编写的软件必须根据应用程序的风险概况确定是否接受具有扩展的DID文档。某些应用程序可能会选择接受但忽略扩展，其他应用程序可能会选择仅接受某些扩展，而高度安全的环境可能会禁止扩展。这些决定取决于应用程序开发人员，而不是本规范的范围。
+
+当扩展JSON-LD Context覆盖规范中已经指定的术语的扩展URL时，实现必须抛出错误。为避免意外覆盖术语的可能性，建议开发人员限定其扩展范围。例如，以下扩展限定新的`PhotoStreamService`术语，以便它只能在`service`属性中使用：
+```json
+{
+  "@context": {
+    "service": {
+      "@id": "https://w3id.org/did#service",
+      "@context": {
+        "PhotoStreamService": "https://example.com/vocab#PhotoStreamService"
+      }
+    }
+  }
+}
+```
+敦促开发人员确保扩展JSON-LD上下文具有高可用性。无法获取上下文的实现将产生错误。确保扩展JSON-LD上下文始终可用的策略包括使用内容寻址的URL用于上下文，将上下文文档与实现捆绑在一起，或者启用对上下文的积极缓存。
+
+## DID操作
+要在特定的分布式帐本或网络（称为目标系统）上启用DID和DID文档的完整功能，DID方法规范必须指定客户端如何执行以下每个CRUD操作。每个操作必须指定为构建和测试目标系统的可互操作客户端实现所需的详细级别。请注意，由于DID文档的指定内容，这些操作可以有效地用于执行CKMS（加密密钥管理系统）所需的所有操作，例如：
+* 密钥注册
+* 密钥更换
+* 密钥轮换
+* 密钥恢复
+* 密钥到期
+
+### 创建
+DID方法规范必须指定客户端如何在目标系统上创建DID记录（DID及其关联的DID文档的组合），包括建立所有权证明所需的所有加密操作。
+
+### 读/验证
+DID方法规范必须指定客户端如何使用DID从目标系统请求DID文档，包括客户端如何验证响应的真实性。
+
+### 更新
+DID方法规范必须指定客户端如何更新目标系统上的DID记录，包括建立控制证据所需的所有加密操作。
+
+### 删除/撤销
+虽然分布式帐本的核心功能是不变性，但DID方法规范必须指定客户端如何撤销目标系统上的DID记录，包括建立撤销证明所需的所有加密操作。
+
+## DID解析器
+DID解析器是一个软件组件，其API设计用于接受DID查找请求并执行相应的DID方法以检索授权威的DID文档。为了符合此规范，一个DID解析器：
+
+1. 应该根据DID方法规范验证DID是否有效，否则应该抛出错误。
+2. 在执行DID解析操作时，必须符合适用的DID方法规范的要求。
+3. 如果对DID文档签名了，应该提供验证DID文档完整性的服务。
+4. 可以提供返回DID文档的请求属性的服务。
 
 
 
