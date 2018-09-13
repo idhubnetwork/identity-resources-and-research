@@ -122,6 +122,14 @@ function identityOwner(address identity) public view returns(address) {
 
 ## Json Web Token
 
+### create
+用户选用在 Authentications 中注册过的任意 ECDSA 私钥签名
+
+### verify
+返回 DID Document 和 bool 以及 payload
+
+ 
+
 
 
 
