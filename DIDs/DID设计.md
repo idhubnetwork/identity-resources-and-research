@@ -128,7 +128,27 @@ function identityOwner(address identity) public view returns(address) {
 ### verify
 返回 DID Document 和 bool 以及 payload
 
- 
+
+## SAML-AWS中的应用
+
+* 使用 DID 登陆 aws-saml-idhub 网站
+* 使用 DID 作为智能合约数据管理的标识符
+
+### 集中登陆版本
+* 注册组织用户，在 saml 服务器上生成自己的密钥文件
+* samlResponse 应该实时生成，所以每次都要访问 saml
+* 用户通过 did-jwt 登陆前端网站管理数据
+
+### 分布式管理版本
+* 通过 did-jwt 管理数据的 golang 微服务
+* 前端提供签名 did-jwt 的 js 微服务
+* metamask 为前端提供钱包服务
+* samlResponse 有效期可以指定并可以重复使用
+
+
+
+
+
 
 
 
