@@ -5,7 +5,7 @@
 
 1. 用户输入网址进入第三方网站点击登陆按钮
 2. 服务端生成包含如下信息的二维码传到网页通过UUID发起长链接
-```json
+```js
 {
 	destination: URL, // server handle url
 	action: LOGIN,
@@ -13,7 +13,7 @@
 }
 ```
 3. 用户用手机扫描二维码并将如下信息打包进JWT进行ES256k签名
-```json
+```js
 {
 	time: expiration, // ten seconds cycle
 	did: DID, // user did
@@ -31,7 +31,7 @@
 
 1. 用户输入网址进入第三方网站选择相应的服务
 2. 服务端生成包含如下信息的二维码或返回如下信息至网页
-```json
+```js
 {
 	destination: URL, // server handle url
 	action: CRUD, // server operation for jwt
@@ -42,7 +42,7 @@
 ```
 4. 手机和网页将以上信息用人类可读方式展现给用户
 5. 提醒用户确认以上信息正确性之后将如下JWT进行ES256k签名
-```json
+```js
 {
 	time: expiration, // ten seconds cycle
 	did: DID, // user did
