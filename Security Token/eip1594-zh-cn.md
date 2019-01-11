@@ -119,7 +119,78 @@ function transferFromWithData(address _from, address _to, uint256 _value, bytes 
 function isIssuable() external view returns (bool);
 ```
 
+#### issue
 
+
+增加总供应量必须调用此函数。
+
+`bytes _data`参数可用于注入链下数据（例如签名数据）以授权或认证新发行通证的发行方和接收者。
+
+被调用时，此函数必须发布`Issued`事件。
+
+```solidity
+function issue(address _tokenHolder, uint256 _value, bytes _data) external;
+```
+
+### 通证赎回
+
+#### redeem
+
+允许通证持有者赎回通证。
+
+必须从总供应量和通证持有者的余额中减去赎回的通证。通证赎回应该像发送通证一样，并且受到相同条件的限制。
+
+`Redeemed`事件必须发布每当这个函数被调用时。
+
+与`transferWithData`函数一样，有一个`bytes _data`参数可以在通证合同中用于验证赎回操作。
+
+```solidity
+function redeem(uint256 _value, bytes _data) external;
+```
+
+#### redeemFrom
+
+这是`redeem`函数的类比。
+
+`msg.sender`必须有设置过足够的`allowance`，这个`allowance`必须由`_value`借记减少。
+
+`Redeemed`事件必须发布每当这个函数被调用时。
+
+```solidity
+function redeemFrom(address _tokenHolder, uint256 _value, bytes _data) external;
+```
+
+### 接口
+
+```solidity
+/// @title IERC1594 Security Token Standard
+/// @dev See https://github.com/SecurityTokenStandard/EIP-Spec
+
+interface IERC1594 is IERC20 {
+
+    // Transfers
+    function transferWithData(address _to, uint256 _value, bytes _data) external;
+    function transferFromWithData(address _from, address _to, uint256 _value, bytes _data) external;
+
+    // Token Issuance
+    function isIssuable() external view returns (bool);
+    function issue(address _tokenHolder, uint256 _value, bytes _data) external;
+
+    // Token Redemption
+    function redeem(uint256 _value, bytes _data) external;
+    function redeemFrom(address _tokenHolder, uint256 _value, bytes _data) external;
+
+    // Transfer Validity
+    function canTransfer(address _to, uint256 _value, bytes _data) external view returns (bool, byte, bytes32);
+    function canTransferFrom(address _from, address _to, uint256 _value, bytes _data) external view returns (bool, byte, bytes32);
+
+    // Issuance / Redemption Events
+    event Issued(address indexed _operator, address indexed _to, uint256 _value, bytes _data);
+    event Redeemed(address indexed _operator, address indexed _from, uint256 _value, bytes _data);
+
+}
+
+```
 
 
 
