@@ -162,10 +162,10 @@
 		* 示例
 		```json
 		{
-		"sub": "did",
-		"act": "login",
-		"aud": "www.idhub.com",
-		"jti": "550E8400-E29B-11D4-A716-446655440000"
+			"sub": "did",
+			"act": "login",
+			"aud": "www.idhub.com",
+			"jti": "550E8400-E29B-11D4-A716-446655440000"
 		}
 		 ```
 	2. 用户使用IDHub移动端App（数字身份钱包）扫描前端页面提供的二维码，前端页面发起带有`jti`参数的轮询请求检测登录行为的回调状态，IDHub移动端App读取信息之后生成待认证信息，待认证信息说明如下
@@ -176,8 +176,8 @@
 		* `HEADER`字段编码前值恒为
 		```json
 		{
-		"alg": "ES256k",
-		"typ": "JWT"
+			"alg": "ES256k",
+			"typ": "JWT"
 		}
 		```
 		* `PAYLOAD`字段的值必须原样保留前两步生成的带认证信息里的字段和值
@@ -209,7 +209,7 @@
 
 ### 功能流程
 * 前置条件
-	* 参考[[8]登录中心化服务商](## [8]登录中心化服务商)所述登录IDHub网页版网站
+	* 参考[[8]登录中心化服务商](#[8]登录中心化服务商)所述登录IDHub网页版网站
 	* 亦或者在App主页内打开`会员申请`页面
 	* 用户同意**会员申请协议**
 * 功能规则
@@ -243,12 +243,73 @@
 		* 用户身份标识符密钥对的私钥签名过的会员申请协议，采用EIP191签名方案
 	6. 审核完毕通知用户
 		* 未通过提示用户更正信息再次提交
-		* 若通过则颁发IDHub会员的可验证声明，App内显示IDHub会员图标
+		* 若通过则颁发IDHub会员的可验证声明，App内点亮IDHub会员图标
 * 后置流程
 	* 申请ST合格投资人或合格购买人的资格
 	* IDHub的会员服务
 
+## [10]合格投资人认证
+### 功能定义
+用户成为IDHub会员之后，获取并保留合格投资人资格。
+### 使用场景
+获得IDHub认证的ST合格投资人的资格。
+### 功能流程图
 
+### 功能流程
+* 前置条件
+	* 参考[[8]登录中心化服务商](#[8]登录中心化服务商)所述登录IDHub网页版网站
+	* 亦或者在App主页内打开`合格投资人认证`页面
+	* 用户同意**合格投资人申请协议**
+* 功能规则
+	1. 选择符合以下哪一类情况，上传相应的文件
+		* 连续三年年收入超过20万美金，或与配偶一起超过30万
+Any individual who had an income in excess of US$200,000 in each of the two most recent years or joint income with that person’s spouse in excess of US$300,000 in each of those years and reasonably expects to reach the same income level in the current year.(上传图片或PDF格式的银行流水）
+		* 值超过1百万美金（除自住房之外）Any individual whose net worth, or joint net worth with that person’s spouse, at the time of his or her purchase of an Interest, exceeds US$1,000,000. As used herein, “net worth” means the excess of total assets at fair market value, including homes (but excluding the value of the undersigned’s primary residence), home furnishings and automobiles, over total liabilities.（上传图片或PDF格式的资产证明/负债证明，如果国籍或居住国任一为美国需要上传税表）
+	2. 通知用户等待信息审核，提交以下信息至IDHub数据库并严密保存
+		* 以上所有已填和上传信息
+		* 用户身份标识符密钥对的私钥签名过的合格投资人申请协议，采用EIP191签名方案
+	3. 审核完毕通知用户
+		* 未通过提示用户更正信息再次提交
+		* 若通过则颁发合格投资人的可验证声明（有效期3个月），App内点亮合格投资人图标
+	4. 监测合格投资人的信息时效性，原则为每次相关投资行为都要求合格投资人的资格认证来源于最近三个月内，因此
+		* 合格投资人的可验证声明有效期为3个月，到期之后应被丢弃
+		* 申请合格投资人的所需上述信息3个月有效期由IDHub服务端维护
+		* 每三个月App内点灭合格投资人图标，提示用户重新申请合格投资人资格并更新必要的身份信息
+* 后置流程
+	* 合格投资人可享服务
+	* ST用户身份认证服务
+
+## [11]合格投资人认证
+### 功能定义
+用户成为IDHub会员之后，获取并保留合格购买人资格。
+### 使用场景
+获得IDHub认证的ST合格购买人的资格。
+### 功能流程图
+
+### 功能流程
+* 前置条件
+	* 参考[[8]登录中心化服务商](#[8]登录中心化服务商)所述登录IDHub网页版网站
+	* 亦或者在App主页内打开`合格购买人认证`页面
+	* 用户同意**合格购买人申请协议**
+* 功能规则
+	1. 选择符合以下哪一类情况，上传相应的图片或PDF格式的CPA/CFA律师证明文件
+		* A natural person (including any person who holds a joint, community property, or other similar shared ownership interest in an issuer that is excepted under Section (c)(7) of the 1940 Act with that person’s qualified purchaser spouse) who owns not less than $5,000,000 in investments as defined by the Securities and Exchange Commission.(上传图片或PDF格式的银行流水）
+		* A trust that is not covered by clause the family entity definition and that was not formed for the specific purpose of acquiring the Partnership Interest offered, as to which the trustee or other person authorized to make decisions with respect to the trust, and each settlor of the other person who has contributed assets to the trust, a natural person, family entity.
+		* A natural person, a corporation, partnership, association, joint stock company, trust, fund or other organized group of persons, whether incorporated or not, acting for his/her/its own account or the account of other qualified purchasers, (i) who in the aggregate owns and invests on a discretionary basis, not less than $25,000,000 in investments and (ii) An entity in which each of the beneficial owners of the entity’s securities is a qualified purchaser, as that term is defined in the 1940 Act.
+		* A “knowledgeable employee,” as defined for purposes of Section 3(c)(5) under the 1940 Act.
+	2. 通知用户等待信息审核，提交以下信息至IDHub数据库并严密保存
+		* 以上所有已填和上传信息
+		* 用户身份标识符密钥对的私钥签名过的合格购买人申请协议，采用EIP191签名方案
+	3. 审核完毕通知用户
+		* 未通过提示用户更正信息再次提交
+		* 若通过则颁发合格购买人的可验证声明（有效期3个月），App内点亮合格购买人图标
+	4. 监测合格购买人的信息时效性，原则为每次相关投资行为都要求合格购买人的资格认证来源于最近三个月内，因此
+		* 合格购买人的可验证声明有效期为3个月，到期之后应被丢弃
+		* 申请合格购买人的所需上述信息3个月有效期由IDHub服务端维护
+		* 每三个月App内点灭合格购买人图标，提示用户重新申请合格购买人资格并更新必要的身份信息
+* 后置流程
+	* 合格购买人可享服务
+	* ST用户身份认证服务
 
 
 
