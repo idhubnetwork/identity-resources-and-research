@@ -5,7 +5,7 @@
 ### 使用场景
 新用户使用新密钥对新建一个去中心化数字身份
 ### 功能流程图
-
+![流程图](https://github.com/idhubnetwork/identity-resources-and-research/blob/master/MagicCircle/img/generate-did.png)
 ### 功能流程
 * 前置条件 - 下载IDHub移动端App（数字身份钱包）
 * 功能规则
@@ -30,7 +30,7 @@
 ### 使用场景
 新用户使用已拥有的密钥对创建一个去中心化数字身份
 ### 功能流程图
-
+![流程图](MagicCircle/img/create-did.png)
 ### 功能流程
 * 前置条件
 	* 下载IDHub移动端App（数字身份钱包）
@@ -373,7 +373,7 @@ Any individual who had an income in excess of US$200,000 in each of the two most
 ### 使用场景
 用户在ST平台使用ST相关服务时，ST平台通过IDHub平台确认用户的合法身份以帮助用户合法获得ST相关服务。
 ### 功能流程图
-
+![流程图](https://github.com/idhubnetwork/identity-resources-and-research/blob/master/MagicCircle/img/st-user-service.png)
 ### 功能流程
 * 前置条件
 	* 用户已有去中心化数字身份
