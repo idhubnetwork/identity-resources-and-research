@@ -498,7 +498,7 @@ Any individual who had an income in excess of US$200,000 in each of the two most
 		* `[JSON Web Token]`中的`exp`字段值必须大于ST平台服务端当前时间戳
 		* `[JSON Web Token]`中的任何字段的值必须符合上述步骤中所有字段描述的要求
 		* 对`[JSON Web Token]`使用以太坊非对称加密算法的`ecrecover`计算出的地址必须和`iss`字段的值中的以太坊地址相同
-	15. ST平台让用户进入ST平台的用户中心或为用户提供后续ST相关服务
+	15. ST平台设置用户登录状态为成功，前端页面在第3步发起的轮询监测到成功登录，然后使用户进入ST平台的用户中心或为用户提供后续ST相关服务
 * 后置流程
 	* ST平台用户中心
 	* ST相关服务
